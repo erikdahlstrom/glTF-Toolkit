@@ -12,6 +12,7 @@ const wchar_t * PARAM_LOD = L"-lod";
 const wchar_t * PARAM_SCREENCOVERAGE = L"-screen-coverage";
 const wchar_t * PARAM_MAXTEXTURESIZE = L"-max-texture-size";
 const wchar_t * PARAM_SHARE_MATERIALS = L"-share-materials";
+const wchar_t * PARAM_TEXTURE_PACKING = L"-texture-packing";
 const wchar_t * SUFFIX_CONVERTED = L"_converted";
 const wchar_t * CLI_INDENT = L"    ";
 const size_t MAXTEXTURESIZE_DEFAULT = 512;
@@ -25,7 +26,8 @@ enum class CommandLineParsingState
     ReadTmpDir,
     ReadLods,
     ReadScreenCoverage,
-    ReadMaxTextureSize
+    ReadMaxTextureSize,
+    TexturePacking
 };
 
 void CommandLine::PrintHelp()
@@ -46,6 +48,7 @@ void CommandLine::PrintHelp()
         << indent << "[" << std::wstring(PARAM_SCREENCOVERAGE) << " <LOD screen coverage values>]" << std::endl
         << indent << "[" << std::wstring(PARAM_MAXTEXTURESIZE) << " <Max texture size in pixels, defaults to 512>]" << std::endl
         << indent << "[" << std::wstring(PARAM_SHARE_MATERIALS) << " defaults to false" << std::endl
+        << indent << "[" << std::wstring(PARAM_TEXTURE_PACKING) << " <rmo|orm>, defaults to rmo" << std::endl
         << std::endl
         << "Example:" << std::endl
         << indent << "WindowsMRAssetConverter FileToConvert.gltf "
@@ -65,7 +68,7 @@ void CommandLine::ParseCommandLineArguments(
     int argc, wchar_t *argv[],
     std::wstring& inputFilePath, AssetType& inputAssetType, std::wstring& outFilePath, std::wstring& tempDirectory,
     std::vector<std::wstring>& lodFilePaths, std::vector<double>& screenCoveragePercentages, size_t& maxTextureSize,
-    bool& shareMaterials)
+    bool& shareMaterials, Microsoft::glTF::Toolkit::TexturePacking& texturePacking)
 {
     CommandLineParsingState state = CommandLineParsingState::Initial;
 
@@ -80,6 +83,7 @@ void CommandLine::ParseCommandLineArguments(
     screenCoveragePercentages.clear();
     maxTextureSize = MAXTEXTURESIZE_DEFAULT;
     shareMaterials = false;
+    texturePacking = Microsoft::glTF::Toolkit::TexturePacking::RoughnessMetallicOcclusion;
 
     state = CommandLineParsingState::InputRead;
 
@@ -118,6 +122,10 @@ void CommandLine::ParseCommandLineArguments(
         {
             shareMaterials = true;
         }
+        else if (param == PARAM_TEXTURE_PACKING)
+        {
+            state = CommandLineParsingState::TexturePacking;
+        }
         else
         {
             switch (state)
@@ -142,6 +150,14 @@ void CommandLine::ParseCommandLineArguments(
             case CommandLineParsingState::ReadMaxTextureSize:
                 maxTextureSize = std::min(static_cast<size_t>(std::stoul(param.c_str())), MAXTEXTURESIZE_MAX);
                 break;
+            case CommandLineParsingState::TexturePacking:
+            {
+                if (param.compare(L"orm") == 0)
+                {
+                    texturePacking = Microsoft::glTF::Toolkit::TexturePacking::OcclusionRoughnessMetallic;
+                }
+                break;
+            }
             case CommandLineParsingState::Initial:
             case CommandLineParsingState::InputRead:
             default:

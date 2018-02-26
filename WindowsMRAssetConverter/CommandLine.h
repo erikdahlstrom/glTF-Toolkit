@@ -5,6 +5,9 @@
 
 #include <vector>
 #include "AssetType.h"
+#include <GLTFSDK/GLTF.h>
+#include <GLTFSDK/IStreamFactory.h>
+#include <GLTFTexturePackingUtils.h>
 
 namespace CommandLine
 {
@@ -14,6 +17,6 @@ namespace CommandLine
         int argc, wchar_t *argv[],
         std::wstring& inputFilePath, AssetType& inputAssetType, std::wstring& outFilePath, std::wstring& tempDirectory,
         std::vector<std::wstring>& lodFilePaths, std::vector<double>& screenCoveragePercentages, size_t& maxTextureSize,
-        bool& sharedMaterials);
+        bool& sharedMaterials, Microsoft::glTF::Toolkit::TexturePacking& texturePacking);
 };
 
