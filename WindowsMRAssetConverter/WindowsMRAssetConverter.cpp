@@ -74,6 +74,7 @@ GLTFDocument LoadAndConvertDocumentForWindowsMR(
     AssetType inputAssetType,
     const std::wstring& tempDirectory,
     size_t maxTextureSize,
+    TexturePacking texturePacking,
     bool processTextures = true)
 {
     // Load the document
@@ -110,7 +111,7 @@ GLTFDocument LoadAndConvertDocumentForWindowsMR(
 
         // 1. Texture Packing
         auto tempDirectoryA = std::string(tempDirectory.begin(), tempDirectory.end());
-        document = GLTFTexturePackingUtils::PackAllMaterialsForWindowsMR(streamReader, document, TexturePacking::RoughnessMetallicOcclusion, tempDirectoryA);
+        document = GLTFTexturePackingUtils::PackAllMaterialsForWindowsMR(streamReader, document, texturePacking, tempDirectoryA);
 
         std::wcout << L"Compressing textures - this can take a few minutes..." << std::endl;
 
@@ -143,13 +144,14 @@ int wmain(int argc, wchar_t *argv[])
         std::vector<double> screenCoveragePercentages;
         size_t maxTextureSize;
         bool shareMaterials;
+        TexturePacking texturePacking;
 
-        CommandLine::ParseCommandLineArguments(argc, argv, inputFilePath, inputAssetType, outFilePath, tempDirectory, lodFilePaths, screenCoveragePercentages, maxTextureSize, shareMaterials);
+        CommandLine::ParseCommandLineArguments(argc, argv, inputFilePath, inputAssetType, outFilePath, tempDirectory, lodFilePaths, screenCoveragePercentages, maxTextureSize, shareMaterials, texturePacking);
 
         // Load document, and perform steps:
         // 1. Texture Packing
         // 2. Texture Compression
-        auto document = LoadAndConvertDocumentForWindowsMR(inputFilePath, inputAssetType, tempDirectory, maxTextureSize);
+        auto document = LoadAndConvertDocumentForWindowsMR(inputFilePath, inputAssetType, tempDirectory, maxTextureSize, texturePacking);
 
         // 3. LOD Merging
         if (lodFilePaths.size() > 0)
@@ -166,7 +168,7 @@ int wmain(int argc, wchar_t *argv[])
                 auto lod = lodFilePaths[i];
                 auto subFolder = FileSystem::CreateSubFolder(tempDirectory, L"lod" + std::to_wstring(i + 1));
 
-                lodDocuments.push_back(LoadAndConvertDocumentForWindowsMR(lod, AssetTypeUtils::AssetTypeFromFilePath(lod), subFolder, maxTextureSize, !shareMaterials));
+                lodDocuments.push_back(LoadAndConvertDocumentForWindowsMR(lod, AssetTypeUtils::AssetTypeFromFilePath(lod), subFolder, maxTextureSize, texturePacking, !shareMaterials));
             
                 lodDocumentRelativePaths.push_back(FileSystem::GetRelativePathWithTrailingSeparator(FileSystem::GetBasePath(inputFilePath), FileSystem::GetBasePath(lod)));
             }
