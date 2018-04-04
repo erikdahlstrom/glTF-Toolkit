@@ -285,7 +285,12 @@ void GLTFTextureCompressionUtils::CompressImage(DirectX::ScratchImage& image, Te
     if (!gpuCompressionSuccessful)
     {
         // Try software compression
-        if (FAILED(DirectX::Compress(image.GetImages(), image.GetImageCount(), image.GetMetadata(), compressionFormat, compressionFlags | DirectX::TEX_COMPRESS_PARALLEL, 0, compressedImage)))
+        DWORD extraCompressionFlags = DirectX::TEX_COMPRESS_PARALLEL;
+        if (compressionFormat == DXGI_FORMAT_BC7_UNORM || compressionFormat == DXGI_FORMAT_BC7_UNORM_SRGB)
+        {
+            extraCompressionFlags |= DirectX::TEX_COMPRESS_BC7_QUICK;
+        }
+        if (FAILED(DirectX::Compress(image.GetImages(), image.GetImageCount(), image.GetMetadata(), compressionFormat, compressionFlags | extraCompressionFlags, 0, compressedImage)))
         {
             throw GLTFException("Failed to compress data using software compression");
         }
