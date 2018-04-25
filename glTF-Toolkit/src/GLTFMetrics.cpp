@@ -27,7 +27,7 @@ namespace
 			}
 			else
 			{
-				throw std::invalid_argument("Unhandled primitive.mode: " + primitive.mode);
+				throw GLTFException("Unhandled primitive.mode: " + primitive.mode);
 			}
 		}
 
@@ -150,15 +150,16 @@ float GLTFMetrics::GetMaxAnimationDurationInSeconds(const GLTFDocument& doc)
 	return maxAnimationDurationInSeconds;
 }
 
-std::vector<std::pair<size_t, size_t>> GLTFMetrics::GetAllTextureDimensions(const IStreamReader& streamReader, const GLTFDocument& doc)
+std::vector<std::pair<size_t, size_t>> GLTFMetrics::GetAllTextureSizes(const IStreamReader& streamReader, const GLTFDocument& doc)
 {
-	std::vector<std::pair<size_t, size_t>> allImageDimensions;
+	std::vector<std::pair<size_t, size_t>> allTextureSizes;
 	GLTFResourceReader gltfResourceReader(streamReader);
 
 	for (auto texture : doc.textures.Elements())
 	{
 		const Image& image = doc.images.Get(texture.imageId);
 
+		// Note: Loading all the image data may not actually be required since we only need the size
 		std::vector<uint8_t> imageData = gltfResourceReader.ReadBinaryData(doc, image);
 
 		DirectX::TexMetadata info;
@@ -172,15 +173,15 @@ std::vector<std::pair<size_t, size_t>> GLTFMetrics::GetAllTextureDimensions(cons
 			}
 		}
 
-		allImageDimensions.emplace_back(std::make_pair(info.width, info.height));
+		allTextureSizes.emplace_back(std::make_pair(info.width, info.height));
 	}
 
-	return allImageDimensions;
+	return allTextureSizes;
 }
 
 std::pair<size_t, size_t> GLTFMetrics::GetMaxTextureSize(const IStreamReader& streamReader, const GLTFDocument& doc)
 {
-	auto dims = GetAllTextureDimensions(streamReader, doc);
+	auto dims = GetAllTextureSizes(streamReader, doc);
 
 	std::pair<size_t, size_t> maxTextureSize(0, 0);
 

@@ -19,7 +19,7 @@ namespace Microsoft::glTF::Toolkit
 		static std::vector<uint32_t> GetNumberOfNodesPerLOD(const GLTFDocument& doc);
 		static std::vector<uint32_t> GetMaxNumberOfSubmeshesPerLOD(const GLTFDocument& doc); // GetMaxNumberOfMeshPrimitivesPerLOD?
 		static float GetMaxAnimationDurationInSeconds(const GLTFDocument& doc);
-		static std::vector<std::pair<size_t, size_t>> GetAllTextureDimensions(const IStreamReader& streamReader, const GLTFDocument& doc);
+		static std::vector<std::pair<size_t, size_t>> GetAllTextureSizes(const IStreamReader& streamReader, const GLTFDocument& doc);
 		static std::pair<size_t, size_t> GetMaxTextureSize(const IStreamReader& streamReader, const GLTFDocument& doc);
 		//static std::map<AnimationChannel, unsigned int> GetMaxKeyFramesPerChannel(const GLTFDocument& doc);
 		static uint32_t GetNumberOfNodeLODLevels(const GLTFDocument& doc);
