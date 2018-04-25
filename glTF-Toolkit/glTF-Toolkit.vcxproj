@@ -304,6 +304,7 @@
     <ClInclude Include="inc\DeviceResources.h" />
     <ClInclude Include="inc\GLBtoGLTF.h" />
     <ClInclude Include="inc\GLTFLODUtils.h" />
+    <ClInclude Include="inc\GLTFMetrics.h" />
     <ClInclude Include="inc\GLTFTextureCompressionUtils.h" />
     <ClInclude Include="inc\GLTFTextureLoadingUtils.h" />
     <ClInclude Include="inc\GLTFTexturePackingUtils.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="src\DeviceResources.cpp" />
     <ClCompile Include="src\GLBtoGLTF.cpp" />
     <ClCompile Include="src\GLTFLODUtils.cpp" />
+    <ClCompile Include="src\GLTFMetrics.cpp" />
     <ClCompile Include="src\GLTFTextureCompressionUtils.cpp" />
     <ClCompile Include="src\GLTFTextureLoadingUtils.cpp" />
     <ClCompile Include="src\GLTFTexturePackingUtils.cpp" />
