@@ -28,6 +28,7 @@ namespace Microsoft::glTF::Toolkit::Test
 		const char* c_cubeWithLODJson = "Resources\\gltf\\CubeWithLOD.gltf";
 		const char* c_cubeWithoutLODJson = "Resources\\gltf\\CubeAsset3D.gltf";
 		const char* c_waterbottleJson = "Resources\\gltf\\WaterBottle\\WaterBottle.gltf";
+		const char* c_textureTestJson = "Resources\\gltf\\TextureTest\\TextureTest.gltf";
 
 		TEST_METHOD(GLTFMetrics_GetNumberOfNodeLODLevels)
 		{
@@ -55,6 +56,16 @@ namespace Microsoft::glTF::Toolkit::Test
 				auto result = GLTFMetrics::GetMaxTextureSize(streamReader, doc);
 				size_t expectedWidth = 2048;
 				size_t expectedHeight = 2048;
+				Assert::AreEqual(expectedWidth, result.first);
+				Assert::AreEqual(expectedHeight, result.second);
+			});
+
+			TestUtils::LoadAndExecuteGLTFTest(c_textureTestJson, [](auto doc, auto path)
+			{
+				TestStreamReader streamReader(path);
+				auto result = GLTFMetrics::GetMaxTextureSize(streamReader, doc);
+				size_t expectedWidth = 101;
+				size_t expectedHeight = 51;
 				Assert::AreEqual(expectedWidth, result.first);
 				Assert::AreEqual(expectedHeight, result.second);
 			});
